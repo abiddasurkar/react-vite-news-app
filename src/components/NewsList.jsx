@@ -139,16 +139,11 @@ export default function NewsList() {
     }
   }, [hasMore, loading, nextPageToken, fetchNews])
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault()
     setSearchQuery(searchInput)
     setNextPageToken(null)
     setArticles([])
-  }
-
-  const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch()
-    }
   }
 
   const handleLogoutClick = () => {
@@ -329,13 +324,12 @@ export default function NewsList() {
           </div>
 
           {/* Search bar */}
-          <div className="pb-5">
+          <form onSubmit={handleSearch} className="pb-5">
             <div className="relative">
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                onKeyPress={handleSearchKeyPress}
                 placeholder="Search for news articles, topics, or keywords..."
                 className="w-full pl-12 pr-32 py-4 rounded-xl text-base transition-all duration-300 border-2 focus:outline-none"
                 style={{
@@ -362,7 +356,7 @@ export default function NewsList() {
                 🔍
               </span>
               <button
-                onClick={handleSearch}
+                type="submit"
                 disabled={loading}
                 className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-300 disabled:opacity-50"
                 style={{
@@ -374,7 +368,7 @@ export default function NewsList() {
                 Search
               </button>
             </div>
-          </div>
+          </form>
 
           {/* Country filters */}
           <div className="flex gap-2 overflow-x-auto pb-5 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 scrollbar-hide">
@@ -590,54 +584,33 @@ export default function NewsList() {
       {/* Logout Confirmation Dialog */}
       {showLogoutDialog && (
         <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1rem',
-            zIndex: 9999
+            backdropFilter: 'blur(4px)'
           }}
           onClick={handleLogoutCancel}
         >
           <div 
+            className="bg-white rounded-2xl p-6 max-w-sm w-full"
             style={{
-              backgroundColor: 'white',
-              borderRadius: '1rem',
-              padding: '1.5rem',
-              maxWidth: '24rem',
-              width: '100%',
               boxShadow: '0 20px 60px -15px rgba(0,0,0,0.3)',
-              position: 'relative',
-              zIndex: 10000
+              transform: 'scale(1)',
+              opacity: 1,
+              animation: 'fadeInScale 300ms ease-out'
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Icon */}
             <div 
+              className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
               style={{
-                width: '3.5rem',
-                height: '3.5rem',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1rem',
                 backgroundColor: '#FEE2E2'
               }}
             >
               <svg 
-                style={{ 
-                  width: '1.75rem', 
-                  height: '1.75rem',
-                  color: '#DC2626' 
-                }}
+                className="w-7 h-7"
+                style={{ color: '#DC2626' }}
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -648,12 +621,9 @@ export default function NewsList() {
 
             {/* Title */}
             <h3 
+              className="text-xl font-bold text-center mb-2"
               style={{
                 fontFamily: '"Playfair Display", Georgia, serif',
-                fontSize: '1.25rem',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                marginBottom: '0.5rem',
                 color: '#292524'
               }}
             >
@@ -662,10 +632,9 @@ export default function NewsList() {
 
             {/* Message */}
             <p 
+              className="text-center mb-6"
               style={{
                 fontFamily: '"DM Sans", system-ui, sans-serif',
-                textAlign: 'center',
-                marginBottom: '1.5rem',
                 color: '#57534E',
                 fontSize: '0.9375rem'
               }}
@@ -674,21 +643,15 @@ export default function NewsList() {
             </p>
 
             {/* Buttons */}
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <div className="flex gap-3">
               <button
                 onClick={handleLogoutCancel}
+                className="flex-1 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
                 style={{
-                  flex: 1,
-                  padding: '0.75rem 1rem',
-                  borderRadius: '0.75rem',
                   fontFamily: '"DM Sans", system-ui, sans-serif',
-                  fontWeight: '600',
-                  fontSize: '0.875rem',
                   backgroundColor: '#F5F5F4',
                   color: '#44403C',
-                  border: '1px solid #E7E5E4',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s'
+                  border: '1px solid #E7E5E4'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#E7E5E4'
@@ -701,18 +664,12 @@ export default function NewsList() {
               </button>
               <button
                 onClick={handleLogoutConfirm}
+                className="flex-1 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
                 style={{
-                  flex: 1,
-                  padding: '0.75rem 1rem',
-                  borderRadius: '0.75rem',
                   fontFamily: '"DM Sans", system-ui, sans-serif',
-                  fontWeight: '600',
-                  fontSize: '0.875rem',
                   backgroundColor: '#DC2626',
                   color: 'white',
-                  border: '1px solid #DC2626',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s'
+                  border: '1px solid #DC2626'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#B91C1C'
