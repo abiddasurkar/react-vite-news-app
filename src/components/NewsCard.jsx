@@ -1,9 +1,7 @@
 import React from 'react'
 
 export default function NewsCard({ article }) {
-  // Safe category handling with inline fallback (no theme import needed)
-  const imageUrl =
-    article.image_url || 'https://via.placeholder.com/400x200?text=No+Image'
+  const imageUrl = article.image_url || 'https://via.placeholder.com/600x400/0D9488/ffffff?text=NewsHub'
 
   const pubDate = new Date(article.pubDate).toLocaleDateString('en-US', {
     month: 'short',
@@ -11,191 +9,238 @@ export default function NewsCard({ article }) {
     year: 'numeric',
   })
 
-  // Get primary category safely
   const primaryCategory = Array.isArray(article.category)
     ? article.category[0]
     : article.category
 
-  // Category color mapping with safe defaults
+  // Category styling with teal-based theme - using direct hex values
   const categoryMap = {
     business: { bg: '#DBEAFE', text: '#1E40AF', icon: '💼' },
-    politics: { bg: '#FECACA', text: '#991B1B', icon: '🏛️' },
-    top: { bg: '#FEF08A', text: '#854D0E', icon: '⭐' },
-    technology: { bg: '#DDD6FE', text: '#4C1D95', icon: '🚀' },
-    tech: { bg: '#DDD6FE', text: '#4C1D95', icon: '🚀' },
-    health: { bg: '#DCFCE7', text: '#166534', icon: '🏥' },
-    sports: { bg: '#FEDF72', text: '#B45309', icon: '⚽' },
-    entertainment: { bg: '#FBCFE8', text: '#831843', icon: '🎬' },
-    world: { bg: '#CFF0F5', text: '#164E63', icon: '🌍' },
-    science: { bg: '#E0E7FF', text: '#3730A3', icon: '🔬' },
+    politics: { bg: '#FEE2E2', text: '#991B1B', icon: '🏛️' },
+    top: { bg: '#CCFBF1', text: '#115E59', icon: '⭐' },
+    technology: { bg: '#E0E7FF', text: '#4338CA', icon: '🚀' },
+    tech: { bg: '#E0E7FF', text: '#4338CA', icon: '🚀' },
+    health: { bg: '#D1FAE5', text: '#065F46', icon: '🏥' },
+    sports: { bg: '#FEF3C7', text: '#92400E', icon: '⚽' },
+    entertainment: { bg: '#FCE7F3', text: '#831843', icon: '🎬' },
+    world: { bg: '#CFFAFE', text: '#155E75', icon: '🌍' },
+    science: { bg: '#DDD6FE', text: '#5B21B6', icon: '🔬' },
     finance: { bg: '#D1FAE5', text: '#065F46', icon: '💰' },
   }
 
-  // Get category config with safe fallback
   const categoryConfig = categoryMap[primaryCategory?.toLowerCase()] || {
-    bg: '#F3F4F6',
-    text: '#374151',
+    bg: '#F5F5F4',
+    text: '#44403C',
     icon: '📰',
   }
 
-  // Sentiment mapping
   const sentimentMap = {
     positive: {
-      bg: '#DCFCE7',
-      text: '#166534',
+      bg: '#D1FAE5',
+      text: '#047857',
       icon: '📈',
+      label: 'Positive'
     },
     negative: {
       bg: '#FEE2E2',
-      text: '#991B1B',
+      text: '#B91C1C',
       icon: '📉',
+      label: 'Negative'
     },
     neutral: {
-      bg: '#F3F4F6',
-      text: '#374151',
+      bg: '#F5F5F4',
+      text: '#78716C',
       icon: '➡️',
+      label: 'Neutral'
     },
   }
 
   const sentiment = article.sentiment || 'neutral'
   const sentimentStyle = sentimentMap[sentiment] || sentimentMap.neutral
 
-  const isHighPriority = article.source_priority && article.source_priority < 1000
-
   return (
-    <div
-      className="
-        bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform
-        hover:translate-y-[-12px]
-        h-full flex flex-col
-        border border-gray-100
-      "
+    <article 
+      className="group h-full flex flex-col rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.02] cursor-pointer"
       style={{
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        backgroundColor: 'white',
+        border: `1px solid #E7E5E4`,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02)'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = `0 20px 40px -15px rgba(13, 148, 136, 0.25), 0 0 0 1px #99F6E4`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02)'
       }}
     >
-      {/* Image Container */}
-      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 group">
-        {/* Image */}
+      {/* Image container */}
+      <div className="relative aspect-[16/10] overflow-hidden">
         <img
           src={imageUrl}
           alt={article.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           onError={(e) => {
-            e.target.src =
-              'https://via.placeholder.com/400x200?text=News&bg=3B82F6&tc=FFFFFF'
+            e.target.src = 'https://via.placeholder.com/600x400/0D9488/ffffff?text=NewsHub'
+          }}
+        />
+        
+        {/* Gradient overlay */}
+        <div 
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{
+            background: `linear-gradient(180deg, transparent 0%, rgba(41, 37, 36, 0.9) 100%)`
           }}
         />
 
-        {/* Overlay Gradient on Hover */}
-        <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+        {/* Category badge */}
+        <div 
+          className="absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 backdrop-blur-md transition-all duration-300"
           style={{
-            background: 'linear-gradient(135deg, rgba(31,41,55,0.8), rgba(31,41,55,0.6))',
-          }}
-        ></div>
-
-        {/* Category Badge */}
-        <div
-          className="absolute top-3 left-3 px-3 py-1.5 rounded-full font-semibold text-xs flex items-center gap-1 shadow-lg"
-          style={{
-            backgroundColor: categoryConfig.bg,
+            backgroundColor: categoryConfig.bg + 'E6',
             color: categoryConfig.text,
-            fontFamily: 'system-ui, -apple-system, sans-serif',
+            fontFamily: '"DM Sans", system-ui, sans-serif',
+            border: `1px solid ${categoryConfig.bg}`
           }}
         >
           <span>{categoryConfig.icon}</span>
           <span className="capitalize">{primaryCategory || 'news'}</span>
         </div>
 
-        {/* Source Badge */}
+        {/* Source badge */}
         {article.source_name && (
-          <div
-            className="absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg"
+          <div 
+            className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-md"
             style={{
-              backgroundColor: 'rgba(59, 130, 246, 0.9)',
+              backgroundColor: 'rgba(13, 148, 136, 0.9)',
+              color: 'white',
+              fontFamily: '"DM Sans", system-ui, sans-serif',
+              border: `1px solid #14B8A6`
             }}
           >
-            {article.source_name.substring(0, 12)}
-          </div>
-        )}
-
-        {/* Priority Badge */}
-        {isHighPriority && (
-          <div className="absolute bottom-3 right-3 text-yellow-500 text-lg animate-pulse">
-            ⚡
+            {article.source_name.substring(0, 15)}
           </div>
         )}
       </div>
 
       {/* Content */}
       <div className="flex-1 p-5 flex flex-col">
-        {/* Metadata Row */}
-        <div className="flex items-center justify-between mb-3 text-xs gap-2">
-          <span className="text-gray-500 flex items-center gap-1">
-            📅 {pubDate}
-          </span>
-          {article.source_priority && (
-            <span className="text-gray-400 text-xs">
-              Rank: {article.source_priority}
+        {/* Meta info */}
+        <div className="flex items-center gap-3 mb-3 text-xs">
+          <time 
+            className="flex items-center gap-1.5"
+            style={{ 
+              fontFamily: '"DM Sans", system-ui, sans-serif',
+              color: '#78716C'
+            }}
+          >
+            <span className="text-sm">📅</span>
+            {pubDate}
+          </time>
+          {article.source_priority && article.source_priority < 1000 && (
+            <span 
+              className="px-2 py-0.5 rounded-full text-xs font-semibold"
+              style={{
+                backgroundColor: '#FEF3C7',
+                color: '#92400E',
+                fontFamily: '"DM Sans", system-ui, sans-serif'
+              }}
+            >
+              ⚡ Featured
             </span>
           )}
         </div>
 
         {/* Title */}
-        <h3 className="text-base font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+        <h3 
+          className="text-lg font-bold mb-3 line-clamp-2 transition-colors duration-300"
+          style={{
+            fontFamily: '"Playfair Display", Georgia, serif',
+            color: '#292524',
+            lineHeight: '1.3'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = '#0D9488'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = '#292524'
+          }}
+        >
           {article.title}
         </h3>
 
         {/* Description */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
-          {article.description ||
-            article.content?.substring(0, 150) ||
-            'Click to read the full article...'}
+        <p 
+          className="text-sm mb-4 line-clamp-3 flex-1"
+          style={{
+            fontFamily: '"DM Sans", system-ui, sans-serif',
+            color: '#57534E',
+            lineHeight: '1.6'
+          }}
+        >
+          {article.description || article.content?.substring(0, 150) || 'Click to read the full story...'}
         </p>
 
-        {/* Sentiment Badge */}
+        {/* Sentiment indicator */}
         {sentiment && (
-          <div className="mb-4 flex items-center gap-2">
-            <span className="text-xs text-gray-600">Sentiment:</span>
-            <span
-              className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
+          <div className="mb-4">
+            <div 
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
               style={{
                 backgroundColor: sentimentStyle.bg,
                 color: sentimentStyle.text,
+                fontFamily: '"DM Sans", system-ui, sans-serif'
               }}
             >
               <span>{sentimentStyle.icon}</span>
-              <span className="capitalize">{sentiment}</span>
-            </span>
+              <span>{sentimentStyle.label}</span>
+            </div>
           </div>
         )}
 
         {/* Divider */}
-        <div className="border-t border-gray-200 pt-3 mt-auto"></div>
+        <div 
+          className="border-t pt-4 mt-auto"
+          style={{ borderColor: '#E7E5E4' }}
+        />
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-3">
-          <span className="text-xs text-gray-500 truncate flex-1">
+          <span 
+            className="text-xs truncate flex-1"
+            style={{
+              fontFamily: '"DM Sans", system-ui, sans-serif',
+              color: '#78716C'
+            }}
+          >
             {article.source_name || 'Unknown Source'}
           </span>
           <a
             href={article.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="
-              ml-2 text-blue-600 hover:text-blue-800 font-semibold text-sm
-              transition-all duration-200 whitespace-nowrap flex items-center gap-1
-              group/link
-            "
+            className="group/link ml-3 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 whitespace-nowrap"
+            style={{
+              fontFamily: '"DM Sans", system-ui, sans-serif',
+              color: '#0D9488',
+              backgroundColor: '#F0FDFA',
+              border: `1px solid #99F6E4`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#0D9488'
+              e.currentTarget.style.color = 'white'
+              e.currentTarget.style.borderColor = '#0D9488'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#F0FDFA'
+              e.currentTarget.style.color = '#0D9488'
+              e.currentTarget.style.borderColor = '#99F6E4'
+            }}
           >
-            Read
-            <span className="group-hover/link:translate-x-1 transition-transform duration-300">
-              →
-            </span>
+            <span>Read</span>
+            <span className="transition-transform duration-300 group-hover/link:translate-x-1">→</span>
           </a>
         </div>
       </div>
-    </div>
+    </article>
   )
 }
